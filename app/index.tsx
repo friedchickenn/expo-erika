@@ -174,23 +174,25 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
   gridContainer: {
+    marginTop: 30,
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "center",
     paddingBottom: 1,
-    width: "50%",
+    width: 500,
     paddingHorizontal: 10,
   },
   gridItem: {
     width: "30%", 
     aspectRatio: 1, 
     margin: 2,
+    paddingBottom: 2,
     alignItems: "center",
     justifyContent: "center",
   },
   gridImage: {
-    width: 150,
-    height: 150,
+    width: 120,
+    height: 120,
     borderRadius: 10,
   },
 });
