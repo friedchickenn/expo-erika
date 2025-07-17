@@ -1,21 +1,20 @@
 // app/index.tsx
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 
-//Saya menggunakan data manual karena lebih mudah dalam pengelolaan, tidak memerlukan pengambilan data dari sumber eksternal, 
+// Saya menggunakan data manual karena lebih mudah dalam pengelolaan, 
+// tidak memerlukan pengambilan data dari sumber eksternal, 
 // serta memudahkan dalam pengujian dan penyesuaian data seperti NIM, nama, dan jenis font secara langsung.
 
-// Data Manual NIM atas (menggunakan font statis)
-//Font statis adalah font dengan file terpisah untuk setiap gaya (seperti Regular, Bold).
+// Font statis adalah font dengan file terpisah untuk setiap gaya (seperti Regular, Bold).
 const dataStatic = [
   { nim: "105841104222", nama: "Alif Ryanto Rahman", font: "Fredericka" },
   { nim: "105841104122", nama: "Selfira Ayu Safitri", font: "Manufacturing" },
   { nim: "105841104022", nama: "Rindiani Saputri", font: "Monoton" },
-  { nim: "105841107522", nama: "Ahmad Fauzan", font: "Playwrite" }, //stambuk dari bawah karena stambuk diatas sudah habis
-  { nim: "105841107322", nama: "Alpin N. Nasir", font: "SpecialElite" }, //stambuk 105841107422 dilewati karena sudah tidak mengikuti perkuliahan
+  { nim: "105841107522", nama: "Ahmad Fauzan", font: "Playwrite" }, // stambuk dari bawah karena data atas habis
+  { nim: "105841107322", nama: "Alpin N. Nasir", font: "SpecialElite" }, // 107422 dilewati karena tidak aktif
 ];
 
-// Data Manual NIM bawah (menggunakan variable font)
-//Font variabel adalah satu file font yang mendukung berbagai gaya dan ketebalan secara fleksibel.
+// Font variabel adalah satu file font yang mendukung berbagai gaya dan ketebalan secara fleksibel.
 const dataVariable = [
   { nim: "105841104422", nama: "Zulkifli", font: "Caveat" },
   { nim: "105841104522", nama: "Fifiana", font: "Cinzel" },
@@ -76,6 +75,17 @@ export default function Index() {
           </View>
         ))}
       </View>
+
+      {/* LAMPIRAN VERIFIKASI */}
+      <Text style={styles.sectionTitle}>Lampiran Verifikasi</Text>
+      <Image
+        source={require("../assets/images/verifikasi1.jpg")}
+        style={styles.verificationImage}
+      />
+      <Image
+        source={require("../assets/images/verifikasi2.jpg")}
+        style={styles.verificationImage}
+      />
     </ScrollView>
   );
 }
@@ -90,7 +100,7 @@ const styles = StyleSheet.create({
     color: "#555",
   },
   sectionTitle: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: "bold",
     textAlign: "center",
     marginVertical: 20,
@@ -105,9 +115,9 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 4,
     marginBottom: 30,
   },
   headerRow: {
@@ -115,6 +125,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#ddd",
     paddingVertical: 12,
     alignItems: "center",
+    borderBottomWidth: 1,
+    borderColor: "#bbb",
   },
   headerCell: {
     flex: 1,
@@ -133,6 +145,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     textAlign: "center",
+    color: "#333",
   },
   photo: {
     width: 80,
@@ -140,5 +153,16 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
     borderRadius: 8,
     marginHorizontal: 5,
+    borderWidth: 1,
+    borderColor: "#ccc",
+  },
+  verificationImage: {
+    width: "90%",
+    height: 400,
+    resizeMode: "contain",
+    alignSelf: "center",
+    marginBottom: 30,
+    borderWidth: 1,
+    borderColor: "#999",
   },
 });
