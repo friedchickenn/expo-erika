@@ -1,16 +1,21 @@
 // app/index.tsx
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 
+//Saya menggunakan data manual karena lebih mudah dalam pengelolaan, tidak memerlukan pengambilan data dari sumber eksternal, 
+// serta memudahkan dalam pengujian dan penyesuaian data seperti NIM, nama, dan jenis font secara langsung.
+
 // Data Manual NIM atas (menggunakan font statis)
+//Font statis adalah font dengan file terpisah untuk setiap gaya (seperti Regular, Bold).
 const dataStatic = [
   { nim: "105841104222", nama: "Alif Ryanto Rahman", font: "Fredericka" },
   { nim: "105841104122", nama: "Selfira Ayu Safitri", font: "Manufacturing" },
   { nim: "105841104022", nama: "Rindiani Saputri", font: "Monoton" },
-  { nim: "105841107522", nama: "Ahmad Fauzan", font: "Playwrite" },
-  { nim: "105841107322", nama: "Alpin N. Nasir", font: "SpecialElite" },
+  { nim: "105841107522", nama: "Ahmad Fauzan", font: "Playwrite" }, //stambuk dari bawah karena stambuk diatas sudah habis
+  { nim: "105841107322", nama: "Alpin N. Nasir", font: "SpecialElite" }, //stambuk 105841107422 dilewati karena sudah tidak mengikuti perkuliahan
 ];
 
 // Data Manual NIM bawah (menggunakan variable font)
+//Font variabel adalah satu file font yang mendukung berbagai gaya dan ketebalan secara fleksibel.
 const dataVariable = [
   { nim: "105841104422", nama: "Zulkifli", font: "Caveat" },
   { nim: "105841104522", nama: "Fifiana", font: "Cinzel" },
