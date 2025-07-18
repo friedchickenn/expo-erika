@@ -11,18 +11,61 @@ const NIM_ACUAN = "105841104322";
 const BATAS_BAWAH = "105841104022";
 const BATAS_ATAS = "105841107522";
 
-// Daftar font yang digunakan (10 font berbeda)
+// Daftar font (5 static + 5 variable)
 const DAFTAR_FONT = [
-  "Fredericka",
-  "Manufacturing",
-  "Monoton",
-  "Playwrite",
-  "SpecialElite",
-  "Caveat",
-  "Cinzel",
-  "CrimsonPro",
-  "Orbitron",
-  "SplineSans"
+  // Font static
+  { 
+    nama: "Fredericka",
+    jenis: "static",
+    sumber: require("../assets/fonts/static/FrederickatheGreat-Regular.ttf")
+  },
+  {
+    nama: "Manufacturing",
+    jenis: "static",
+    sumber: require("../assets/fonts/static/ManufacturingConsent-Regular.ttf")
+  },
+  {
+    nama: "Monoton",
+    jenis: "static",
+    sumber: require("../assets/fonts/static/Monoton-Regular.ttf")
+  },
+  {
+    nama: "Playwrite",
+    jenis: "static",
+    sumber: require("../assets/fonts/static/PlaywriteVNGuides-Regular.ttf")
+  },
+  {
+    nama: "SpecialElite",
+    jenis: "static",
+    sumber: require("../assets/fonts/static/SpecialElite-Regular.ttf")
+  },
+  
+  // Font variable
+  {
+    nama: "Caveat",
+    jenis: "variable",
+    sumber: require("../assets/fonts/variable/Caveat-VariableFont_wght.ttf")
+  },
+  {
+    nama: "Cinzel",
+    jenis: "variable",
+    sumber: require("../assets/fonts/variable/Cinzel-VariableFont_wght.ttf")
+  },
+  {
+    nama: "CrimsonPro",
+    jenis: "variable",
+    sumber: require("../assets/fonts/variable/CrimsonPro-VariableFont_wght.ttf")
+  },
+  {
+    nama: "Orbitron",
+    jenis: "variable",
+    sumber: require("../assets/fonts/variable/Orbitron-VariableFont_wght.ttf")
+  },
+  {
+    nama: "SplineSans",
+    jenis: "variable",
+    sumber: require("../assets/fonts/variable/SplineSansMono-VariableFont_wght.ttf")
+  }
 ];
 
 // ===============================
@@ -34,7 +77,7 @@ const buatNIM = (urutan: number) => `1058411${urutan.toString().padStart(3, "0")
 const dapatkanURLFoto = (nim: string) => `https://simak.unismuh.ac.id/upload/mahasiswa/${nim}_.jpg`;
 
 // Fungsi untuk menghasilkan urutan NIM secara sirkular
-const buatUrutanSirkular = (acuan: number, min: number, max: number) => {
+const buatUrutanMahasiswa = (acuan: number, min: number, max: number) => {
   const hasil = [];
   const rentang = max - min + 1;
   
@@ -42,14 +85,22 @@ const buatUrutanSirkular = (acuan: number, min: number, max: number) => {
   for (let i = 5; i > 0; i--) {
     let urutan = acuan - i;
     if (urutan < min) urutan = max - (min - urutan - 1);
-    hasil.push(buatNIM(urutan));
+    hasil.push({
+      nim: buatNIM(urutan),
+      posisi: "sebelum",
+      urutan: urutan
+    });
   }
   
   // 5 NIM setelah acuan
   for (let i = 1; i <= 5; i++) {
     let urutan = acuan + i;
     if (urutan > max) urutan = min + (urutan - max - 1);
-    hasil.push(buatNIM(urutan));
+    hasil.push({
+      nim: buatNIM(urutan),
+      posisi: "sesudah",
+      urutan: urutan
+    });
   }
   
   return hasil;
@@ -63,8 +114,8 @@ const urutanAcuan = ekstrakUrutan(NIM_ACUAN);
 const urutanMin = ekstrakUrutan(BATAS_BAWAH);
 const urutanMax = ekstrakUrutan(BATAS_ATAS);
 
-// Generate 10 NIM (5 sebelum dan 5 sesudah acuan)
-const semuaNIM = buatUrutanSirkular(urutanAcuan, urutanMin, urutanMax);
+// Generate 10 data mahasiswa (5 sebelum dan 5 sesudah acuan)
+const dataMahasiswa = buatUrutanMahasiswa(urutanAcuan, urutanMin, urutanMax);
 
 // Daftar nama contoh (10 nama)
 const CONTOH_NAMA = [
@@ -80,11 +131,12 @@ const CONTOH_NAMA = [
   "Dia Rahmatillah"
 ];
 
-// Data mahasiswa akhir dengan font unik untuk setiap nama
-const dataMahasiswa = semuaNIM.map((nim, index) => ({
-  nim,
+// Gabungkan data dengan nama dan font
+const dataFinal = dataMahasiswa.map((mahasiswa, index) => ({
+  ...mahasiswa,
   nama: CONTOH_NAMA[index],
-  font: DAFTAR_FONT[index] // Setiap nama mendapat font berbeda
+  font: DAFTAR_FONT[index].nama,
+  jenisFont: DAFTAR_FONT[index].jenis
 }));
 
 // ===============================
@@ -92,18 +144,12 @@ const dataMahasiswa = semuaNIM.map((nim, index) => ({
 // ===============================
 
 export default function DirektoriMahasiswa() {
-  const [fontsLoaded] = useFonts({
-    Fredericka: require("../assets/fonts/static/FrederickatheGreat-Regular.ttf"),
-    Manufacturing: require("../assets/fonts/static/ManufacturingConsent-Regular.ttf"),
-    Monoton: require("../assets/fonts/static/Monoton-Regular.ttf"),
-    Playwrite: require("../assets/fonts/static/PlaywriteVNGuides-Regular.ttf"),
-    SpecialElite: require("../assets/fonts/static/SpecialElite-Regular.ttf"),
-    Caveat: require("../assets/fonts/variable/Caveat-VariableFont_wght.ttf"),
-    Cinzel: require("../assets/fonts/variable/Cinzel-VariableFont_wght.ttf"),
-    CrimsonPro: require("../assets/fonts/variable/CrimsonPro-VariableFont_wght.ttf"),
-    Orbitron: require("../assets/fonts/variable/Orbitron-VariableFont_wght.ttf"),
-    SplineSans: require("../assets/fonts/variable/SplineSansMono-VariableFont_wght.ttf"),
-  });
+  const [fontsLoaded, error] = useFonts(
+    DAFTAR_FONT.reduce((acc, font) => {
+      acc[font.nama] = font.sumber;
+      return acc;
+    }, {} as Record<string, any>)
+  );
 
   const [gagalMemuatFoto, setGagalMemuatFoto] = useState<{[key: string]: boolean}>({});
 
@@ -112,6 +158,7 @@ export default function DirektoriMahasiswa() {
       <View style={styles.kontainerLoading}>
         <ActivityIndicator size="large" color="#2c3e50" />
         <Text style={styles.teksLoading}>Memuat Font...</Text>
+        {error && <Text style={styles.teksError}>Error: Gagal memuat beberapa font</Text>}
       </View>
     );
   }
@@ -128,14 +175,17 @@ export default function DirektoriMahasiswa() {
       <View style={styles.tabel}>
         <View style={styles.headerTabel}>
           <Text style={styles.teksHeader}>No.</Text>
+          <Text style={styles.teksHeader}>Posisi</Text>
           <Text style={styles.teksHeader}>Foto</Text>
-          <Text style={styles.teksHeader}>Nama</Text>
+          <Text style={styles.teksHeader}>Nama (Font {DAFTAR_FONT.length} jenis)</Text>
           <Text style={styles.teksHeader}>NIM</Text>
+          <Text style={styles.teksHeader}>Jenis Font</Text>
         </View>
 
-        {dataMahasiswa.map((mahasiswa, index) => (
+        {dataFinal.map((mahasiswa, index) => (
           <View key={mahasiswa.nim} style={styles.barisTabel}>
             <Text style={styles.sel}>{index + 1}</Text>
+            <Text style={styles.sel}>{mahasiswa.posisi}</Text>
             <View style={styles.kontainerFoto}>
               <Image
                 source={{ 
@@ -148,11 +198,14 @@ export default function DirektoriMahasiswa() {
                 resizeMode="cover"
               />
             </View>
-            <Text style={[styles.sel, { fontFamily: mahasiswa.font }]}>
+            <Text style={[styles.selNama, { fontFamily: mahasiswa.font }]}>
               {mahasiswa.nama}
             </Text>
             <Text style={[styles.sel, { fontFamily: mahasiswa.font }]}>
               {mahasiswa.nim}
+            </Text>
+            <Text style={styles.sel}>
+              {mahasiswa.jenisFont}
             </Text>
           </View>
         ))}
@@ -160,10 +213,10 @@ export default function DirektoriMahasiswa() {
 
       <View style={styles.footer}>
         <Text style={styles.teksFooter}>
-          * Setiap nama menggunakan font yang berbeda
+          * Menampilkan {dataFinal.filter(d => d.posisi === 'sebelum').length} sebelum dan {dataFinal.filter(d => d.posisi === 'sesudah').length} setelah NIM acuan
         </Text>
         <Text style={styles.teksFooter}>
-          Rentang NIM: {BATAS_BAWAH} sampai {BATAS_ATAS}
+          Menggunakan {DAFTAR_FONT.filter(f => f.jenis === 'static').length} font static dan {DAFTAR_FONT.filter(f => f.jenis === 'variable').length} font variable
         </Text>
       </View>
     </ScrollView>
@@ -190,6 +243,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#7f8c8d',
   },
+  teksError: {
+    marginTop: 10,
+    fontSize: 14,
+    color: '#e74c3c',
+  },
   header: {
     padding: 20,
     backgroundColor: '#3498db',
@@ -200,11 +258,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'white',
     marginBottom: 5,
+    fontFamily: 'SpecialElite', // Contoh penggunaan salah satu font
   },
   subjudul: {
     fontSize: 16,
     color: 'white',
     textAlign: 'center',
+    fontFamily: 'CrimsonPro', // Contoh penggunaan font variable
   },
   tabel: {
     margin: 15,
@@ -227,6 +287,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: 'white',
     fontWeight: 'bold',
+    fontSize: 12,
   },
   barisTabel: {
     flexDirection: 'row',
@@ -238,8 +299,17 @@ const styles = StyleSheet.create({
   sel: {
     flex: 1,
     textAlign: 'center',
-    fontSize: 14,
+    fontSize: 12,
     color: '#34495e',
+    paddingHorizontal: 2,
+  },
+  selNama: {
+    flex: 1,
+    textAlign: 'center',
+    fontSize: 12,
+    color: '#2c3e50',
+    paddingHorizontal: 2,
+    fontWeight: 'bold',
   },
   kontainerFoto: {
     flex: 1,
@@ -247,9 +317,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   foto: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
     borderWidth: 1,
     borderColor: '#bdc3c7',
     backgroundColor: '#f0f0f0',
