@@ -1,6 +1,6 @@
 // app/index.tsx
-import { useState } from 'react';
 import { useFonts } from "expo-font";
+import { useState } from 'react';
 import { ActivityIndicator, Image, ScrollView, StyleSheet, Text, View } from "react-native";
 
 // ===============================
@@ -11,7 +11,7 @@ const NIM_ACUAN = "105841104322";
 const BATAS_BAWAH = "105841104022";
 const BATAS_ATAS = "105841107522";
 
-// Daftar font (5 static + 5 variable)
+// Daftar 10 font (5 static + 5 variable)
 const DAFTAR_FONT = [
   // Font static
   { 
@@ -110,18 +110,11 @@ const buatUrutanMahasiswa = (acuan: number, min: number, max: number) => {
 // PEMBUATAN DATA
 // ===============================
 
-const urutanAcuan = ekstrakUrutan(NIM_ACUAN);
-const urutanMin = ekstrakUrutan(BATAS_BAWAH);
-const urutanMax = ekstrakUrutan(BATAS_ATAS);
-
-// Generate 10 data mahasiswa (5 sebelum dan 5 sesudah acuan)
-const dataMahasiswa = buatUrutanMahasiswa(urutanAcuan, urutanMin, urutanMax);
-
 // Daftar nama contoh (10 nama)
 const CONTOH_NAMA = [
   "Muh. Wahyu Yudistira",
   "Ahmad Fauzan",
-  "Rindiani Saputri",
+  "Rindiani Saputri", 
   "Selfira Ayu",
   "Alif Ryanto",
   "Zulkifli",
@@ -131,11 +124,22 @@ const CONTOH_NAMA = [
   "Dia Rahmatillah"
 ];
 
-// Gabungkan data dengan nama dan font
+// Validasi jumlah font dan nama
+if (DAFTAR_FONT.length !== 10) throw new Error("Harus ada tepat 10 font");
+if (CONTOH_NAMA.length !== 10) throw new Error("Harus ada tepat 10 nama");
+
+const urutanAcuan = ekstrakUrutan(NIM_ACUAN);
+const urutanMin = ekstrakUrutan(BATAS_BAWAH);
+const urutanMax = ekstrakUrutan(BATAS_ATAS);
+
+// Generate 10 data mahasiswa (5 sebelum dan 5 sesudah acuan)
+const dataMahasiswa = buatUrutanMahasiswa(urutanAcuan, urutanMin, urutanMax);
+
+// Gabungkan data dengan nama dan font yang unik
 const dataFinal = dataMahasiswa.map((mahasiswa, index) => ({
   ...mahasiswa,
   nama: CONTOH_NAMA[index],
-  font: DAFTAR_FONT[index].nama,
+  font: DAFTAR_FONT[index].nama, // Langsung mapping 1-to-1
   jenisFont: DAFTAR_FONT[index].jenis
 }));
 
@@ -166,8 +170,10 @@ export default function DirektoriMahasiswa() {
   return (
     <ScrollView style={styles.kontainerUtama}>
       <View style={styles.header}>
-        <Text style={styles.judul}>Direktori Mahasiswa</Text>
-        <Text style={styles.subjudul}>
+        <Text style={[styles.judul, { fontFamily: 'Fredericka' }]}>
+          Direktori Mahasiswa
+        </Text>
+        <Text style={[styles.subjudul, { fontFamily: 'CrimsonPro' }]}>
           Menampilkan 5 mahasiswa sebelum dan 5 setelah NIM: {NIM_ACUAN}
         </Text>
       </View>
@@ -177,46 +183,56 @@ export default function DirektoriMahasiswa() {
           <Text style={styles.teksHeader}>No.</Text>
           <Text style={styles.teksHeader}>Posisi</Text>
           <Text style={styles.teksHeader}>Foto</Text>
-          <Text style={styles.teksHeader}>Nama (Font {DAFTAR_FONT.length} jenis)</Text>
+          <Text style={styles.teksHeader}>Nama</Text>
           <Text style={styles.teksHeader}>NIM</Text>
           <Text style={styles.teksHeader}>Jenis Font</Text>
         </View>
 
-        {dataFinal.map((mahasiswa, index) => (
-          <View key={mahasiswa.nim} style={styles.barisTabel}>
-            <Text style={styles.sel}>{index + 1}</Text>
-            <Text style={styles.sel}>{mahasiswa.posisi}</Text>
-            <View style={styles.kontainerFoto}>
-              <Image
-                source={{ 
-                  uri: gagalMemuatFoto[mahasiswa.nim] 
-                    ? 'https://via.placeholder.com/60?text=No+Photo' 
-                    : dapatkanURLFoto(mahasiswa.nim)
-                }}
-                style={styles.foto}
-                onError={() => setGagalMemuatFoto({...gagalMemuatFoto, [mahasiswa.nim]: true})}
-                resizeMode="cover"
-              />
+        {dataFinal.map((mahasiswa, index) => {
+          const fontInfo = DAFTAR_FONT.find(f => f.nama === mahasiswa.font);
+          
+          return (
+            <View key={`${mahasiswa.nim}-${index}`} style={styles.barisTabel}>
+              <Text style={styles.sel}>{index + 1}</Text>
+              <Text style={styles.sel}>{mahasiswa.posisi}</Text>
+              <View style={styles.kontainerFoto}>
+                <Image
+                  source={{ 
+                    uri: gagalMemuatFoto[mahasiswa.nim] 
+                      ? 'https://via.placeholder.com/60?text=No+Photo' 
+                      : dapatkanURLFoto(mahasiswa.nim)
+                  }}
+                  style={styles.foto}
+                  onError={() => setGagalMemuatFoto({...gagalMemuatFoto, [mahasiswa.nim]: true})}
+                  resizeMode="cover"
+                />
+              </View>
+              <Text style={[
+                styles.selNama, 
+                { 
+                  fontFamily: mahasiswa.font,
+                  color: fontInfo ? '#2c3e50' : '#e74c3c'
+                }
+              ]}>
+                {mahasiswa.nama}
+              </Text>
+              <Text style={[styles.sel, { fontFamily: mahasiswa.font }]}>
+                {mahasiswa.nim}
+              </Text>
+              <Text style={styles.sel}>
+                {fontInfo?.jenis || 'Tidak diketahui'}
+              </Text>
             </View>
-            <Text style={[styles.selNama, { fontFamily: mahasiswa.font }]}>
-              {mahasiswa.nama}
-            </Text>
-            <Text style={[styles.sel, { fontFamily: mahasiswa.font }]}>
-              {mahasiswa.nim}
-            </Text>
-            <Text style={styles.sel}>
-              {mahasiswa.jenisFont}
-            </Text>
-          </View>
-        ))}
+          );
+        })}
       </View>
 
       <View style={styles.footer}>
         <Text style={styles.teksFooter}>
-          * Menampilkan {dataFinal.filter(d => d.posisi === 'sebelum').length} sebelum dan {dataFinal.filter(d => d.posisi === 'sesudah').length} setelah NIM acuan
+          * Setiap nama menggunakan font yang berbeda (total {DAFTAR_FONT.length} font)
         </Text>
         <Text style={styles.teksFooter}>
-          Menggunakan {DAFTAR_FONT.filter(f => f.jenis === 'static').length} font static dan {DAFTAR_FONT.filter(f => f.jenis === 'variable').length} font variable
+          Rentang NIM: {BATAS_BAWAH} sampai {BATAS_ATAS}
         </Text>
       </View>
     </ScrollView>
@@ -258,13 +274,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'white',
     marginBottom: 5,
-    fontFamily: 'SpecialElite', // Contoh penggunaan salah satu font
   },
   subjudul: {
     fontSize: 16,
     color: 'white',
     textAlign: 'center',
-    fontFamily: 'CrimsonPro', // Contoh penggunaan font variable
   },
   tabel: {
     margin: 15,
