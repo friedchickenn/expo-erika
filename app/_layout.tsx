@@ -13,7 +13,6 @@ const BATAS_ATAS = "105841107522";
 
 // Daftar 10 font (5 static + 5 variable)
 const DAFTAR_FONT = [
-  // Font static
   { 
     nama: "Fredericka",
     jenis: "static",
@@ -39,8 +38,6 @@ const DAFTAR_FONT = [
     jenis: "static",
     sumber: require("../assets/fonts/static/SpecialElite-Regular.ttf")
   },
-  
-  // Font variable
   {
     nama: "Caveat",
     jenis: "variable",
@@ -76,16 +73,18 @@ const ekstrakUrutan = (nim: string) => parseInt(nim.substring(7, 10));
 const buatNIM = (urutan: number) => `1058411${urutan.toString().padStart(3, "0")}22`;
 const dapatkanURLFoto = (nim: string) => `https://simak.unismuh.ac.id/upload/mahasiswa/${nim}_.jpg`;
 
-// Fungsi untuk menghasilkan urutan NIM secara sirkular
+// Fungsi untuk menghasilkan urutan NIM secara sirkular yang diperbaiki
 const buatUrutanMahasiswa = (acuan: number, min: number, max: number) => {
   const hasil = [];
   const rentang = max - min + 1;
   
-  // 5 NIM sebelum acuan
-  for (let i = 5; i > 0; i--) {
+  // 5 NIM sebelum acuan dengan penanganan kasus indeks rendah
+  for (let i = 1; i <= 5; i++) {
     let urutan = acuan - i;
-    if (urutan < min) urutan = max - (min - urutan - 1);
-    hasil.push({
+    while (urutan < min) {
+      urutan = max - (min - urutan - 1);
+    }
+    hasil.unshift({  // unshift untuk mempertahankan urutan ascending
       nim: buatNIM(urutan),
       posisi: "sebelum",
       urutan: urutan
@@ -95,7 +94,9 @@ const buatUrutanMahasiswa = (acuan: number, min: number, max: number) => {
   // 5 NIM setelah acuan
   for (let i = 1; i <= 5; i++) {
     let urutan = acuan + i;
-    if (urutan > max) urutan = min + (urutan - max - 1);
+    while (urutan > max) {
+      urutan = min + (urutan - max - 1);
+    }
     hasil.push({
       nim: buatNIM(urutan),
       posisi: "sesudah",
@@ -139,8 +140,9 @@ const dataMahasiswa = buatUrutanMahasiswa(urutanAcuan, urutanMin, urutanMax);
 const dataFinal = dataMahasiswa.map((mahasiswa, index) => ({
   ...mahasiswa,
   nama: CONTOH_NAMA[index],
-  font: DAFTAR_FONT[index].nama, // Langsung mapping 1-to-1
-  jenisFont: DAFTAR_FONT[index].jenis
+  font: DAFTAR_FONT[index].nama,
+  jenisFont: DAFTAR_FONT[index].jenis,
+  fontIndex: index // Untuk memastikan font unik
 }));
 
 // ===============================
@@ -185,14 +187,17 @@ export default function DirektoriMahasiswa() {
           <Text style={styles.teksHeader}>Foto</Text>
           <Text style={styles.teksHeader}>Nama</Text>
           <Text style={styles.teksHeader}>NIM</Text>
-          <Text style={styles.teksHeader}>Jenis Font</Text>
+          <Text style={styles.teksHeader}>Font Ke-</Text>
         </View>
 
         {dataFinal.map((mahasiswa, index) => {
-          const fontInfo = DAFTAR_FONT.find(f => f.nama === mahasiswa.font);
+          const fontValid = DAFTAR_FONT.some(f => f.nama === mahasiswa.font);
           
           return (
-            <View key={`${mahasiswa.nim}-${index}`} style={styles.barisTabel}>
+            <View key={`${mahasiswa.nim}-${index}`} style={[
+              styles.barisTabel,
+              !fontValid && styles.barisError
+            ]}>
               <Text style={styles.sel}>{index + 1}</Text>
               <Text style={styles.sel}>{mahasiswa.posisi}</Text>
               <View style={styles.kontainerFoto}>
@@ -210,17 +215,18 @@ export default function DirektoriMahasiswa() {
               <Text style={[
                 styles.selNama, 
                 { 
-                  fontFamily: mahasiswa.font,
-                  color: fontInfo ? '#2c3e50' : '#e74c3c'
+                  fontFamily: fontValid ? mahasiswa.font : undefined,
+                  color: fontValid ? '#2c3e50' : '#e74c3c'
                 }
               ]}>
                 {mahasiswa.nama}
+                {!fontValid && " (Font tidak valid)"}
               </Text>
-              <Text style={[styles.sel, { fontFamily: mahasiswa.font }]}>
+              <Text style={[styles.sel, { fontFamily: fontValid ? mahasiswa.font : undefined }]}>
                 {mahasiswa.nim}
               </Text>
               <Text style={styles.sel}>
-                {fontInfo?.jenis || 'Tidak diketahui'}
+                {mahasiswa.fontIndex + 1}
               </Text>
             </View>
           );
@@ -229,10 +235,10 @@ export default function DirektoriMahasiswa() {
 
       <View style={styles.footer}>
         <Text style={styles.teksFooter}>
-          * Setiap nama menggunakan font yang berbeda (total {DAFTAR_FONT.length} font)
+          * Setiap dari 10 nama menggunakan font yang berbeda
         </Text>
         <Text style={styles.teksFooter}>
-          Rentang NIM: {BATAS_BAWAH} sampai {BATAS_ATAS}
+          Font 1-5: Static | Font 6-10: Variable
         </Text>
       </View>
     </ScrollView>
@@ -306,9 +312,12 @@ const styles = StyleSheet.create({
   barisTabel: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 12,
+    paddingVertical: 8,
     borderBottomWidth: 1,
     borderBottomColor: '#ecf0f1',
+  },
+  barisError: {
+    backgroundColor: '#ffebee'
   },
   sel: {
     flex: 1,
@@ -321,7 +330,6 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: 'center',
     fontSize: 12,
-    color: '#2c3e50',
     paddingHorizontal: 2,
     fontWeight: 'bold',
   },
