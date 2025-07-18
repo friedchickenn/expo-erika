@@ -1,6 +1,6 @@
 // app/index.tsx
-import { useFonts } from "expo-font";
 import { useState } from 'react';
+import { useFonts } from "expo-font";
 import { ActivityIndicator, Image, ScrollView, StyleSheet, Text, View } from "react-native";
 
 // ===============================
