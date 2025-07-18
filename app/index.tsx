@@ -1,29 +1,26 @@
 // app/index.tsx
+import { Image, ScrollView, StyleSheet, Text, View, ActivityIndicator } from "react-native";
 import { useFonts } from "expo-font";
-import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
-
 
 // ===============================
 // KONFIGURASI DASAR
 // ===============================
 
-// NIM acuan dan batas atas/bawah
 const nimAcuan = "105841104322";
 const batasAtas = "105841104022";
 const batasBawah = "105841107522";
 
-// Daftar 10 font: 5 statis + 5 variabel (harus dimuat & digunakan)
 const fontList = [
   "Fredericka",     // statis
-  "Manufacturing", // statis
+  "Manufacturing",  // statis
   "Monoton",        // statis
   "Playwrite",      // statis
   "SpecialElite",   // statis
-  "Caveat",         // variabel
-  "Cinzel",         // variabel
-  "CrimsonPro",     // variabel
-  "Orbitron",       // variabel
-  "SplineSans"      // variabel
+  "Caveat",          // variabel
+  "Cinzel",          // variabel
+  "CrimsonPro",      // variabel
+  "Orbitron",        // variabel
+  "SplineSans"       // variabel
 ];
 
 // ===============================
@@ -35,7 +32,7 @@ const numberToNIM = (num: number) => `1058411${num.toString().padStart(3, "0")}2
 const getPhotoUrl = (nim: string) => `https://simak.unismuh.ac.id/upload/mahasiswa/${nim}_.jpg`;
 
 // ===============================
-// GENERASI NIM FINAL
+// GENERASI NIM FINAL TANPA ACUAN
 // ===============================
 
 const urutanAcuan = nimToNumber(nimAcuan);
@@ -58,7 +55,7 @@ const after = Array.from({ length: 5 }, (_, i) => {
   return numberToNIM(urutan);
 });
 
-const finalNIMList = [...before, nimAcuan, ...after];
+const finalNIMList = [...before, ...after];
 
 const namaDummy = [
   "Muh. Wahyu Yudistira",
@@ -97,13 +94,21 @@ export default function Index() {
     SplineSans: require("../assets/fonts/variable/SplineSansMono-VariableFont_wght.ttf"),
   });
 
+  if (!fontsLoaded) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="#333" />
+      </View>
+    );
+  }
+
   return (
     <ScrollView style={{ flex: 1, backgroundColor: "#f9f9f9" }}>
       <Text style={styles.referenceText}>
-        Tabel berikut menampilkan 5 mahasiswa sebelum, 1 mahasiswa acuan, dan 5 mahasiswa setelah berdasarkan NIM <Text style={{ fontWeight: "bold" }}>{nimAcuan}</Text> atas nama <Text style={{ fontWeight: "bold" }}>Erika Yanti</Text>. Total 11 mahasiswa ditampilkan dengan font berbeda-beda.
+        Tabel berikut menampilkan 5 mahasiswa sebelum dan 5 mahasiswa setelah NIM acuan {nimAcuan}. Total 10 mahasiswa ditampilkan menggunakan 10 font berbeda.
       </Text>
 
-      <Text style={styles.sectionTitle}>Daftar Mahasiswa Berdasarkan Urutan Stambuk</Text>
+      <Text style={styles.sectionTitle}>Daftar Mahasiswa</Text>
 
       <View style={styles.table}>
         <View style={styles.headerRow}>
@@ -113,23 +118,17 @@ export default function Index() {
           <Text style={styles.headerCell}>NIM</Text>
         </View>
 
-        {finalData.map((item, index) => {
-          const isAcuan = item.nim === nimAcuan;
-          return (
-            <View
-              key={index}
-              style={[styles.row, isAcuan && styles.acuanRow]}
-            >
-              <Text style={styles.cell}>{index + 1}</Text>
-              <Image
-                source={{ uri: getPhotoUrl(item.nim) }}
-                style={styles.photo}
-              />
-              <Text style={[styles.cell, { fontFamily: item.font }]}>{item.nama}</Text>
-              <Text style={[styles.cell, { fontFamily: item.font }]}>{item.nim}</Text>
-            </View>
-          );
-        })}
+        {finalData.map((item, index) => (
+          <View key={index} style={styles.row}>
+            <Text style={styles.cell}>{index + 1}</Text>
+            <Image
+              source={{ uri: getPhotoUrl(item.nim) }}
+              style={styles.photo}
+            />
+            <Text style={[styles.cell, { fontFamily: item.font }]}>{item.nama}</Text>
+            <Text style={[styles.cell, { fontFamily: item.font }]}>{item.nim}</Text>
+          </View>
+        ))}
       </View>
     </ScrollView>
   );
@@ -184,11 +183,6 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderBottomWidth: 1,
     borderColor: "#eee",
-  },
-  acuanRow: {
-    backgroundColor: "#fce4ec",
-    borderWidth: 2,
-    borderColor: "#ec407a",
   },
   cell: {
     flex: 1,
