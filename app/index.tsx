@@ -75,17 +75,6 @@ export default function Index() {
           </View>
         ))}
       </View>
-
-      {/* LAMPIRAN VERIFIKASI */}
-      <Text style={styles.sectionTitle}>Lampiran Verifikasi</Text>
-      <Image
-        source={require("../assets/images/verifikasi1.jpg")}
-        style={styles.verificationImage}
-      />
-      <Image
-        source={require("../assets/images/verifikasi2.jpg")}
-        style={styles.verificationImage}
-      />
     </ScrollView>
   );
 }
