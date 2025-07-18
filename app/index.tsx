@@ -19,7 +19,6 @@ const fontList = [
   "Monoton",        // statis
   "Playwrite",      // statis
   "SpecialElite",   // statis
-  "",              //acuan tidak memakai font yang di import
   "Caveat",         // variabel
   "Cinzel",         // variabel
   "CrimsonPro",     // variabel
@@ -67,7 +66,6 @@ const namaDummy = [
   "Rindiani Saputri",
   "Selfira Ayu",
   "Alif Ryanto",
-  "Erika Yanti",
   "Zulkifli",
   "Fifiana",
   "Muh. Akbar",
