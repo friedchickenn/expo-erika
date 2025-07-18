@@ -1,5 +1,7 @@
 // app/index.tsx
+import { useFonts } from "expo-font";
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
+
 
 // ===============================
 // KONFIGURASI DASAR
@@ -10,35 +12,28 @@ const nimAcuan = "105841104322";
 const batasAtas = "105841104022";
 const batasBawah = "105841107522";
 
-// Daftar 11 font (5 statis, 5 variabel + 1 ekstra acuan)
+// Daftar 10 font: 5 statis + 5 variabel (harus dimuat & digunakan)
 const fontList = [
-  "Fredericka",
-  "Manufacturing",
-  "Monoton",
-  "Playwrite",
-  "SpecialElite",
-  "", // NIM Acuan pakai ini (posisi tengah)
-  "Cinzel",
-  "CrimsonPro",
-  "Orbitron",
-  "SplineSans",
-  "Caveat", // untuk looping terakhir
+  "Fredericka",     // statis
+  "Manufacturing", // statis
+  "Monoton",        // statis
+  "Playwrite",      // statis
+  "SpecialElite",   // statis
+  "",              //acuan tidak memakai font yang di import
+  "Caveat",         // variabel
+  "Cinzel",         // variabel
+  "CrimsonPro",     // variabel
+  "Orbitron",       // variabel
+  "SplineSans"      // variabel
 ];
 
 // ===============================
 // FUNGSI PEMBANTU
 // ===============================
 
-// Konversi NIM ke nomor urutan terakhir 3 digit
 const nimToNumber = (nim: string) => parseInt(nim.slice(7, 10));
-
-// Bentuk ulang NIM dari nomor
-const numberToNIM = (num: number) =>
-  `1058411${num.toString().padStart(3, "0")}22`;
-
-// Fungsi mengambil foto (gunakan dummy apabila tidak ada)
-const getPhotoUrl = (nim: string) =>
-  `https://simak.unismuh.ac.id/upload/mahasiswa/${nim}_.jpg`;
+const numberToNIM = (num: number) => `1058411${num.toString().padStart(3, "0")}22`;
+const getPhotoUrl = (nim: string) => `https://simak.unismuh.ac.id/upload/mahasiswa/${nim}_.jpg`;
 
 // ===============================
 // GENERASI NIM FINAL
@@ -48,7 +43,6 @@ const urutanAcuan = nimToNumber(nimAcuan);
 const urutanAtas = nimToNumber(batasAtas);
 const urutanBawah = nimToNumber(batasBawah);
 
-// Ambil 5 sebelum (mundur dan wrap jika perlu)
 const before = Array.from({ length: 5 }, (_, i) => {
   let urutan = urutanAcuan - (i + 1);
   if (urutan < urutanAtas) {
@@ -57,7 +51,6 @@ const before = Array.from({ length: 5 }, (_, i) => {
   return numberToNIM(urutan);
 }).reverse();
 
-// Ambil 5 sesudah (naik dan wrap jika perlu)
 const after = Array.from({ length: 5 }, (_, i) => {
   let urutan = urutanAcuan + (i + 1);
   if (urutan > urutanBawah) {
@@ -66,30 +59,26 @@ const after = Array.from({ length: 5 }, (_, i) => {
   return numberToNIM(urutan);
 });
 
-// Gabung total data: 5 sebelum + 1 acuan + 5 sesudah = 11
 const finalNIMList = [...before, nimAcuan, ...after];
 
-// Dummy nama disesuaikan
 const namaDummy = [
   "Muh. Wahyu Yudistira",
   "Ahmad Fauzan",
   "Rindiani Saputri",
   "Selfira Ayu",
   "Alif Ryanto",
-  "Erika Yanti", // Acuan
+  "Erika Yanti",
   "Zulkifli",
   "Fifiana",
   "Muh. Akbar",
   "Agustiana",
-  "Dia Rahmatillah",
-
+  "Dia Rahmatillah"
 ];
 
-// Gabungkan menjadi objek data
 const finalData = finalNIMList.map((nim, index) => ({
   nim,
   nama: namaDummy[index],
-  font: fontList[index],
+  font: fontList[index % fontList.length],
 }));
 
 // ===============================
@@ -97,13 +86,23 @@ const finalData = finalNIMList.map((nim, index) => ({
 // ===============================
 
 export default function Index() {
+  const [fontsLoaded] = useFonts({
+    Fredericka: require("../assets/fonts/static/FrederickatheGreat-Regular.ttf"),
+    Manufacturing: require("../assets/fonts/static/ManufacturingConsent-Regular.ttf"),
+    Monoton: require("../assets/fonts/static/Monoton-Regular.ttf"),
+    Playwrite: require("../assets/fonts/static/PlaywriteVNGuides-Regular.ttf"),
+    SpecialElite: require("../assets/fonts/static/SpecialElite-Regular.ttf"),
+    Caveat: require("../assets/fonts/variable/Caveat-VariableFont_wght.ttf"),
+    Cinzel: require("../assets/fonts/variable/Cinzel-VariableFont_wght.ttf"),
+    CrimsonPro: require("../assets/fonts/variable/CrimsonPro-VariableFont_wght.ttf"),
+    Orbitron: require("../assets/fonts/variable/Orbitron-VariableFont_wght.ttf"),
+    SplineSans: require("../assets/fonts/variable/SplineSansMono-VariableFont_wght.ttf"),
+  });
+
   return (
     <ScrollView style={{ flex: 1, backgroundColor: "#f9f9f9" }}>
       <Text style={styles.referenceText}>
-        Tabel berikut menampilkan 5 mahasiswa sebelum, 1 mahasiswa acuan, dan 5 mahasiswa setelah
-        berdasarkan NIM <Text style={{ fontWeight: "bold" }}>{nimAcuan}</Text> atas nama{" "}
-        <Text style={{ fontWeight: "bold" }}>Erika Yanti</Text>. Total 11 mahasiswa ditampilkan
-        dengan font berbeda-beda.
+        Tabel berikut menampilkan 5 mahasiswa sebelum, 1 mahasiswa acuan, dan 5 mahasiswa setelah berdasarkan NIM <Text style={{ fontWeight: "bold" }}>{nimAcuan}</Text> atas nama <Text style={{ fontWeight: "bold" }}>Erika Yanti</Text>. Total 11 mahasiswa ditampilkan dengan font berbeda-beda.
       </Text>
 
       <Text style={styles.sectionTitle}>Daftar Mahasiswa Berdasarkan Urutan Stambuk</Text>
@@ -121,24 +120,15 @@ export default function Index() {
           return (
             <View
               key={index}
-              style={[
-                styles.row,
-                isAcuan && styles.acuanRow, // Penanda baris NIM acuan
-              ]}
+              style={[styles.row, isAcuan && styles.acuanRow]}
             >
               <Text style={styles.cell}>{index + 1}</Text>
               <Image
-                source={{
-                  uri: getPhotoUrl(item.nim),
-                }}
+                source={{ uri: getPhotoUrl(item.nim) }}
                 style={styles.photo}
               />
-              <Text style={[styles.cell, { fontFamily: item.font }]}>
-                {item.nama}
-              </Text>
-              <Text style={[styles.cell, { fontFamily: item.font }]}>
-                {item.nim}
-              </Text>
+              <Text style={[styles.cell, { fontFamily: item.font }]}>{item.nama}</Text>
+              <Text style={[styles.cell, { fontFamily: item.font }]}>{item.nim}</Text>
             </View>
           );
         })}
@@ -198,7 +188,7 @@ const styles = StyleSheet.create({
     borderColor: "#eee",
   },
   acuanRow: {
-    backgroundColor: "#fce4ec", // Warna pink muda untuk baris NIM acuan
+    backgroundColor: "#fce4ec",
     borderWidth: 2,
     borderColor: "#ec407a",
   },
