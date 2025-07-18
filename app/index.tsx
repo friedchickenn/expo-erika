@@ -1,64 +1,113 @@
 // app/index.tsx
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 
-// Saya menggunakan data manual karena lebih mudah dalam pengelolaan, 
-// tidak memerlukan pengambilan data dari sumber eksternal, 
-// serta memudahkan dalam pengujian dan penyesuaian data seperti NIM, nama, dan jenis font secara langsung.
+// ===============================
+// KONFIGURASI DASAR
+// ===============================
 
-// Font statis adalah font dengan file terpisah untuk setiap gaya (seperti Regular, Bold).
-const dataStatic = [
-  { nim: "105841104222", nama: "Alif Ryanto Rahman", font: "Fredericka" },
-  { nim: "105841104122", nama: "Selfira Ayu Safitri", font: "Manufacturing" },
-  { nim: "105841104022", nama: "Rindiani Saputri", font: "Monoton" },
-  { nim: "105841107522", nama: "Ahmad Fauzan", font: "Playwrite" }, // stambuk dari bawah karena data atas habis
-  { nim: "105841107322", nama: "Alpin N. Nasir", font: "SpecialElite" }, // 107422 dilewati karena tidak aktif
+// NIM acuan dan batas atas/bawah
+const nimAcuan = "105841104322";
+const batasAtas = "105841104022";
+const batasBawah = "105841107522";
+
+// Daftar 11 font (5 statis, 5 variabel + 1 ekstra acuan)
+const fontList = [
+  "Fredericka",
+  "Manufacturing",
+  "Monoton",
+  "Playwrite",
+  "SpecialElite",
+  "", // NIM Acuan pakai ini (posisi tengah)
+  "Cinzel",
+  "CrimsonPro",
+  "Orbitron",
+  "SplineSans",
+  "Caveat", // untuk looping terakhir
 ];
 
-// Font variabel adalah satu file font yang mendukung berbagai gaya dan ketebalan secara fleksibel.
-const dataVariable = [
-  { nim: "105841104422", nama: "Zulkifli", font: "Caveat" },
-  { nim: "105841104522", nama: "Fifiana", font: "Cinzel" },
-  { nim: "105841104622", nama: "Muh. Akbar Haeruddin", font: "CrimsonPro" },
-  { nim: "105841104722", nama: "Agustiana", font: "Orbitron" },
-  { nim: "105841104822", nama: "Dia Rahmatillah", font: "SplineSans" },
-];
+// ===============================
+// FUNGSI PEMBANTU
+// ===============================
 
-// Fungsi ambil foto dari NIM
+// Konversi NIM ke nomor urutan terakhir 3 digit
+const nimToNumber = (nim: string) => parseInt(nim.slice(7, 10));
+
+// Bentuk ulang NIM dari nomor
+const numberToNIM = (num: number) =>
+  `1058411${num.toString().padStart(3, "0")}22`;
+
+// Fungsi mengambil foto (gunakan dummy apabila tidak ada)
 const getPhotoUrl = (nim: string) =>
   `https://simak.unismuh.ac.id/upload/mahasiswa/${nim}_.jpg`;
 
+// ===============================
+// GENERASI NIM FINAL
+// ===============================
+
+const urutanAcuan = nimToNumber(nimAcuan);
+const urutanAtas = nimToNumber(batasAtas);
+const urutanBawah = nimToNumber(batasBawah);
+
+// Ambil 5 sebelum (mundur dan wrap jika perlu)
+const before = Array.from({ length: 5 }, (_, i) => {
+  let urutan = urutanAcuan - (i + 1);
+  if (urutan < urutanAtas) {
+    urutan = urutanBawah - (urutanAtas - urutan - 1);
+  }
+  return numberToNIM(urutan);
+}).reverse();
+
+// Ambil 5 sesudah (naik dan wrap jika perlu)
+const after = Array.from({ length: 5 }, (_, i) => {
+  let urutan = urutanAcuan + (i + 1);
+  if (urutan > urutanBawah) {
+    urutan = urutanAtas + (urutan - urutanBawah - 1);
+  }
+  return numberToNIM(urutan);
+});
+
+// Gabung total data: 5 sebelum + 1 acuan + 5 sesudah = 11
+const finalNIMList = [...before, nimAcuan, ...after];
+
+// Dummy nama disesuaikan
+const namaDummy = [
+  "Muh. Wahyu Yudistira",
+  "Ahmad Fauzan",
+  "Rindiani Saputri",
+  "Selfira Ayu",
+  "Alif Ryanto",
+  "Erika Yanti", // Acuan
+  "Zulkifli",
+  "Fifiana",
+  "Muh. Akbar",
+  "Agustiana",
+  "Dia Rahmatillah",
+
+];
+
+// Gabungkan menjadi objek data
+const finalData = finalNIMList.map((nim, index) => ({
+  nim,
+  nama: namaDummy[index],
+  font: fontList[index],
+}));
+
+// ===============================
+// KOMPONEN UTAMA
+// ===============================
+
 export default function Index() {
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: "#f4f4f4" }}>
-      {/* Keterangan acuan */}
+    <ScrollView style={{ flex: 1, backgroundColor: "#f9f9f9" }}>
       <Text style={styles.referenceText}>
-        Data di bawah ini menggunakan acuan NIM{" "}
-        <Text style={{ fontWeight: "bold" }}>105841104322</Text> atas nama{" "}
-        <Text style={{ fontWeight: "bold" }}>Erika Yanti</Text>. Lima data di atas dan lima data
-        di bawah berdasarkan urutan stambuk ditampilkan di tabel berikut:
+        Tabel berikut menampilkan 5 mahasiswa sebelum, 1 mahasiswa acuan, dan 5 mahasiswa setelah
+        berdasarkan NIM <Text style={{ fontWeight: "bold" }}>{nimAcuan}</Text> atas nama{" "}
+        <Text style={{ fontWeight: "bold" }}>Erika Yanti</Text>. Total 11 mahasiswa ditampilkan
+        dengan font berbeda-beda.
       </Text>
 
-      {/* TABEL STATIS */}
-      <Text style={styles.sectionTitle}>Daftar Mahasiswa Sebelum Urutan Stambuk</Text>
-      <View style={styles.table}>
-        <View style={styles.headerRow}>
-          <Text style={styles.headerCell}>No</Text>
-          <Text style={styles.headerCell}>Foto</Text>
-          <Text style={styles.headerCell}>Nama</Text>
-          <Text style={styles.headerCell}>NIM</Text>
-        </View>
-        {dataStatic.map((item, index) => (
-          <View key={index} style={styles.row}>
-            <Text style={styles.cell}>{index + 1}</Text>
-            <Image source={{ uri: getPhotoUrl(item.nim) }} style={styles.photo} />
-            <Text style={[styles.cell, { fontFamily: item.font }]}>{item.nama}</Text>
-            <Text style={[styles.cell, { fontFamily: item.font }]}>{item.nim}</Text>
-          </View>
-        ))}
-      </View>
+      <Text style={styles.sectionTitle}>Daftar Mahasiswa Berdasarkan Urutan Stambuk</Text>
 
-      {/* TABEL VARIABEL */}
-      <Text style={styles.sectionTitle}>Daftar Mahasiswa Setelah Urutan Stambuk</Text>
       <View style={styles.table}>
         <View style={styles.headerRow}>
           <Text style={styles.headerCell}>No</Text>
@@ -66,18 +115,41 @@ export default function Index() {
           <Text style={styles.headerCell}>Nama</Text>
           <Text style={styles.headerCell}>NIM</Text>
         </View>
-        {dataVariable.map((item, index) => (
-          <View key={index} style={styles.row}>
-            <Text style={styles.cell}>{index + 1}</Text>
-            <Image source={{ uri: getPhotoUrl(item.nim) }} style={styles.photo} />
-            <Text style={[styles.cell, { fontFamily: item.font }]}>{item.nama}</Text>
-            <Text style={[styles.cell, { fontFamily: item.font }]}>{item.nim}</Text>
-          </View>
-        ))}
+
+        {finalData.map((item, index) => {
+          const isAcuan = item.nim === nimAcuan;
+          return (
+            <View
+              key={index}
+              style={[
+                styles.row,
+                isAcuan && styles.acuanRow, // Penanda baris NIM acuan
+              ]}
+            >
+              <Text style={styles.cell}>{index + 1}</Text>
+              <Image
+                source={{
+                  uri: getPhotoUrl(item.nim),
+                }}
+                style={styles.photo}
+              />
+              <Text style={[styles.cell, { fontFamily: item.font }]}>
+                {item.nama}
+              </Text>
+              <Text style={[styles.cell, { fontFamily: item.font }]}>
+                {item.nim}
+              </Text>
+            </View>
+          );
+        })}
       </View>
     </ScrollView>
   );
 }
+
+// ===============================
+// GAYA
+// ===============================
 
 const styles = StyleSheet.create({
   referenceText: {
@@ -102,11 +174,6 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     borderWidth: 1,
     borderColor: "#ccc",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
-    elevation: 4,
     marginBottom: 30,
   },
   headerRow: {
@@ -130,6 +197,11 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: "#eee",
   },
+  acuanRow: {
+    backgroundColor: "#fce4ec", // Warna pink muda untuk baris NIM acuan
+    borderWidth: 2,
+    borderColor: "#ec407a",
+  },
   cell: {
     flex: 1,
     fontSize: 16,
@@ -144,14 +216,5 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     borderWidth: 1,
     borderColor: "#ccc",
-  },
-  verificationImage: {
-    width: "90%",
-    height: 400,
-    resizeMode: "contain",
-    alignSelf: "center",
-    marginBottom: 30,
-    borderWidth: 1,
-    borderColor: "#999",
   },
 });
