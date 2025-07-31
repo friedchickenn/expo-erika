@@ -1,73 +1,76 @@
-// app/index.tsx
-import { FontAwesome6 } from '@expo/vector-icons';
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+// File: app/index.tsx
+import { View, Text, ScrollView } from 'react-native';
+import Carousel from '../components/Carousel';
 
-export default function Index() {
-  const icons = [
-    { name: "angry", label: "Rage Demon" },
-    { name: "grin-stars", label: "Starry Smile" },
-    { name: "grin-tongue-squint", label: "Cheeky Grin" },
-    { name: "flushed", label: "Flustered Face" },
-    { name: "kiss-beam", label: "Beaming Kiss" },
-    { name: "dizzy", label: "Dizzy Spell" },
-    { name: "kiss", label: "Sweet Kiss" },
-    { name: "grin-wink", label: "Winking Charm" },
-    { name: "grin-alt", label: "Classic Smirk" },
-    { name: "frown-open", label: "Open Disdain" }
-  ];
-
+export default function TabHome() {
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.title}>10 Expressive Icons</Text>
+    <ScrollView 
+      contentContainerStyle={{ 
+        flexGrow: 1, 
+        padding: 20, 
+        backgroundColor: '#F1FAEE'
+      }}
+    >
+      <Carousel />
       
-      <View style={styles.grid}>
-        {icons.map((icon, index) => (
-          <View key={index} style={styles.iconContainer}>
-            <FontAwesome6 name={icon.name} size={40} color="#4a6fa5" />
-            <Text style={styles.iconLabel}>{icon.label}</Text>
-          </View>
-        ))}
+      <Text style={{ 
+        fontSize: 28, 
+        fontWeight: 'bold', 
+        marginBottom: 16, 
+        color: '#1D3557', 
+        textAlign: 'center',
+        fontFamily: 'Fredericka'
+      }}>
+        Universitas Muhammadiyah Makassar
+      </Text>
+
+      <View style={{ 
+        backgroundColor: '#A8DADC', 
+        padding: 20, 
+        borderRadius: 10, 
+        shadowColor: '#000', 
+        shadowOffset: { width: 0, height: 4 }, 
+        shadowOpacity: 0.3, 
+        shadowRadius: 6, 
+        elevation: 8,
+      }}>
+        <Text style={{ 
+          textAlign: 'center', 
+          fontSize: 16, 
+          color: '#1D3557',
+          lineHeight: 24,
+          fontFamily: 'SpecialElite'
+        }}>
+          Universitas Muhammadiyah Makassar, yang lebih dikenal dengan nama Unismuh Makassar, 
+          adalah salah satu perguruan tinggi swasta ternama di Indonesia Timur. Berdiri sejak tahun 1963, 
+          kampus ini terletak di Jalan Sultan Alauddin No. 259, Makassar, Sulawesi Selatan. 
+          Dengan semangat "Ilmu Amaliah, Amal Ilmiah, dan Akhlakul Karimah", 
+          Unismuh berkomitmen mencetak lulusan yang unggul dalam bidang akademik sekaligus memiliki akhlak mulia.
+        </Text>
+      </View>
+
+      <View style={{ 
+        backgroundColor: '#457B9D', 
+        padding: 20, 
+        borderRadius: 10, 
+        marginTop: 20,
+        shadowColor: '#000', 
+        shadowOffset: { width: 0, height: 4 }, 
+        shadowOpacity: 0.3, 
+        shadowRadius: 6, 
+        elevation: 8,
+      }}>
+        <Text style={{ 
+          textAlign: 'center', 
+          fontSize: 16, 
+          color: '#F1FAEE',
+          lineHeight: 24,
+          fontFamily: 'SpecialElite'
+        }}>
+          Memiliki berbagai fakultas dan program studi, Unismuh Makassar aktif mengembangkan pendidikan, penelitian, dan pengabdian kepada masyarakat, 
+          serta menjadi pusat pengembangan ilmu pengetahuan berbasis nilai-nilai Islam.
+        </Text>
       </View>
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f0f4f8",
-    padding: 16,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginVertical: 20,
-    color: "#333",
-  },
-  grid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-around",
-  },
-  iconContainer: {
-    width: "45%",
-    alignItems: "center",
-    marginBottom: 20,
-    padding: 15,
-    backgroundColor: "white",
-    borderRadius: 12,
-    elevation: 3,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  iconLabel: {
-    marginTop: 8,
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#4a6fa5",
-    textAlign: "center",
-  },
-});
